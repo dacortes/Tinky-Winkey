@@ -11,7 +11,7 @@ SOURCES = main.cpp
 FILES_CPPS = $(patsubst %, $(DIRECTORY_SOURCE)/%, $(SOURCES))
 OBJECTS = $(patsubst %, $(DIRECTORY_OBJ)/%, $(SOURCES:.cpp=.obj))
 
-all: dir objs $(NAME)
+all: dir $(NAME)
 
 dir:
     @for %D in ($(DIRECTORIES)) do ( \
@@ -25,8 +25,8 @@ dir:
 objs:
     @for %F in ($(FILES_CPPS)) do $(CC) /c %F /Fo$(DIRECTORY_OBJ)\%~nF.obj
 
-$(NAME): $(OBJECTS)
-    $(CC) $(CFLAGS) $(OBJECTS) /Fe$(NAME).exe
+$(NAME): objs
+    @$(CC) $(CFLAGS) $(OBJECTS) /Fe$(NAME).exe
 
 print:
     @echo $(OBJECTS)
@@ -42,7 +42,7 @@ clean:
         ) \
     )
 fclean: clean
-    del $(NAME).exe
+    @del $(NAME).exe
 
 .PHONY: clean fclean all dir objs print
 .SILENT:
