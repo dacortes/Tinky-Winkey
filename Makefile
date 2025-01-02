@@ -4,15 +4,14 @@ NAME = svc
 CFLAGS = /Wall /WX -nologo
 
 DIRECTORY_OBJ = obj
-DIRECTORIES = obj dep
+DIRECTORIES = obj
 DIRECTORY_SOURCE = srcs
 
 SOURCES = main.cpp
 FILES_CPPS = $(patsubst %, $(DIRECTORY_SOURCE)/%, $(SOURCES))
 OBJECTS = $(patsubst %, $(DIRECTORY_OBJ)/%, $(SOURCES:.cpp=.obj))
-DEPENDENCIES = $(patsubst %, $(DIRECTORY_OBJ)/%, $(SOURCES:.cpp=.d))
 
-all: dir #objs #$(NAME)
+all: dir objs $(NAME)
 
 dir:
     @for %D in ($(DIRECTORIES)) do ( \
