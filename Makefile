@@ -1,35 +1,49 @@
 RM = del /s/q
+RMDIR = rmdir /s /q
 NAME = svc
 CFLAGS = /Wall /WX -nologo
- 
-DIRECTORI_UTILS = obj
-DIRECTORI_SOURCE = srcs
 
-SOURCES = main.cpp hola.cpp
+DIRECTORY_OBJ = obj
+DIRECTORIES = obj dep
+DIRECTORY_SOURCE = srcs
 
-FILES_CPPS = $(patsubst %, $(DIRECTORI_SOURCE)/%, $(SOURCES))
-OBJECTS = $(patsubst %, $(DIRECTORI_SOURCE)/%, $(SOURCES:.cpp=.obj))
-DEPENDENCIES = $(patsubst %, $(DIRECTORI_SOURCE)/%, $(SOURCES:.cpp=.d))
+SOURCES = main.cpp
+FILES_CPPS = $(patsubst %, $(DIRECTORY_SOURCE)/%, $(SOURCES))
+OBJECTS = $(patsubst %, $(DIRECTORY_OBJ)/%, $(SOURCES:.cpp=.obj))
+DEPENDENCIES = $(patsubst %, $(DIRECTORY_OBJ)/%, $(SOURCES:.cpp=.d))
 
-all:
-	mkdir $(DIRECTORI_UTILS)
-	echo "Hola corazon de melon"
+all: dir #objs #$(NAME)
 
-$(OBJECTS): $(FILES_CPPS)
-	$(CPP) $(CFLAGS) $< /Fo$(DIRECTORI_UTILS)$(@F)
+dir:
+    @for %D in ($(DIRECTORIES)) do ( \
+        @if not exist %D ( \
+            @echo Creatin directory: %D && mkdir %D \
+        ) else ( \
+            @echo Directory %D already exists \
+        ) \
+    )
+
+objs:
+    @for %F in ($(FILES_CPPS)) do $(CC) /c %F /Fo$(DIRECTORY_OBJ)\%~nF.obj
+
+$(NAME): $(OBJECTS)
+    $(CC) $(CFLAGS) $(OBJECTS) /Fe$(NAME).exe
+
 print:
-	@type .\srcs\main.cpp
-	@echo $(CC)
-	@echo $(SOURCES)
-	@echo $(OBJECTS)
-	@echo $(@F)
-	@echo $(basename $(OBJECTS))
-	@echo $(FILES_CPPS)
-	@echo $(OBJECTS)
-	@echo $(DEPENDENCIES)
+    @echo $(OBJECTS)
+    @echo $(DEPENDENCIES)
+    @echo $(DIRECTORY_OBJ)
 
-fclean:
-	del $(NAME)
+clean:
+    @for %D in ($(DIRECTORIES)) do ( \
+        @if exist %D ( \
+            @echo Deletin directory: %D && $(RMDIR) %D \
+        ) else ( \
+            @echo Directory %D not exist \
+        ) \
+    )
+fclean: clean
+    del $(NAME).exe
 
-.PHONY:
-#.SILENT:
+.PHONY: clean fclean all dir objs print
+.SILENT:
